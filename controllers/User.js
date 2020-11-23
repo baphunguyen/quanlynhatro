@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
+const mailer = require('./Email')
 
 function validateEmail(text) {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -80,6 +81,7 @@ exports.register = async function(req, res) {
         let random = await Math.random().toString(36).substring(7);
         const newuser = new User(req.body);
         newuser.password = await User.hashPassword(random)
+        await mailer.SendEmailWithRegister(user.email, random);
 
     } catch(err) {
         return res.json({
